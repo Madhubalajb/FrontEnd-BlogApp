@@ -11,6 +11,11 @@ const App = () => {
     const [title, setTitle] = useState('')
     const [author, setAuthor] = useState('')
     const [url, setUrl] = useState('')
+    const [blogs, setBlogs] = useState([])
+
+    useEffect(() => {
+        blogService.getData().then(blogs => setBlogs(blogs))
+    }, [])
 
     const handleLogin = async (event) => {
         event.preventDefault()
@@ -27,12 +32,13 @@ const App = () => {
         }
     }
 
-    const handleBlog = (event) => {
+    const createBlog = (event) => {
         event.preventDefault()
         try {
             const blog = await blogService.postData({
                 title, author, url
             })
+            setBlogs(blogs.concat(blog))
             setTitle('')
             setAuthor('')
             setUrl('')
@@ -52,7 +58,7 @@ const App = () => {
         <center>
             <h1>Login</h1>
             <LoginForm login={handleLogin} u_name={handleUsername} u_password={handlePassword} />
-            <BlogForm blog={handleBlog} title={handleTitle} author={handleAuthor} url={handleUrl} />
+            <BlogForm blog={createBlog} title={handleTitle} author={handleAuthor} url={handleUrl} />
         </center>
     )
 }
