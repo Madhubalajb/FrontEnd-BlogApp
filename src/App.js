@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from 'react'
 import LoginForm from './components/LoginForm'
+import SignUpForm from './components/SignUpForm'
 import BlogForm from './components/BlogForm'
 import loginService from './services/login'
 import blogService from './services/blog'
 
 const App = () => {
+    const [name, setName] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState('')
@@ -23,6 +25,8 @@ const App = () => {
             const user = await loginService.login({
                 username, password
             })
+            window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
+            blogService.setToken(user.token)
             setUser(user)
             setUsername('')
             setPassword('')
@@ -48,6 +52,7 @@ const App = () => {
         }
     }
 
+    const handleName = (event) => setName(event.target.value)
     const handleUsername = (event) => setUsername(event.target.value)
     const handlePassword = (event) => setPassword(event.target.value)
     const handleTitle = (event) => setTitle(event.target.value)
@@ -56,9 +61,9 @@ const App = () => {
 
     return (
         <center>
-            <h1>Login</h1>
             <LoginForm login={handleLogin} u_name={handleUsername} u_password={handlePassword} />
             <BlogForm blog={createBlog} title={handleTitle} author={handleAuthor} url={handleUrl} />
+            <SignUpForm addUser={} name={handleName} u_name={handleUsername} u_password={handlePassword} />
         </center>
     )
 }
