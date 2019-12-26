@@ -54,7 +54,7 @@ const App = () => {
         }
     }
 
-    const createBlog = (event) => {
+    const createBlog = async (event) => {
         event.preventDefault()
         try {
             const blog = await blogService.postData({
