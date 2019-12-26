@@ -3,6 +3,7 @@ import LoginForm from './components/LoginForm'
 import SignUpForm from './components/SignUpForm'
 import BlogForm from './components/BlogForm'
 import loginService from './services/login'
+import signupService from './services/signup'
 import blogService from './services/blog'
 
 const App = () => {
@@ -36,6 +37,23 @@ const App = () => {
         }
     }
 
+    const addUser = async (event) => {
+        event.preventDefault()
+        try {
+            const user = await signupService.signup({
+                name, username, password
+            })
+            window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
+            blogService.setToken(user.token)
+            setName('')
+            setUsername('')
+            setPassword('')
+        } 
+        catch (exception) {
+            console.log(exception)
+        }
+    }
+
     const createBlog = (event) => {
         event.preventDefault()
         try {
@@ -63,7 +81,7 @@ const App = () => {
         <center>
             <LoginForm login={handleLogin} u_name={handleUsername} u_password={handlePassword} />
             <BlogForm blog={createBlog} title={handleTitle} author={handleAuthor} url={handleUrl} />
-            <SignUpForm addUser={} name={handleName} u_name={handleUsername} u_password={handlePassword} />
+            <SignUpForm addUser={addUser} name={handleName} u_name={handleUsername} u_password={handlePassword} />
         </center>
     )
 }
