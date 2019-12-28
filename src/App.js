@@ -20,6 +20,15 @@ const App = () => {
         blogService.getData().then(blogs => setBlogs(blogs))
     }, [])
 
+    useEffect(() => {
+        const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser') 
+        if(loggedUserJSON) {
+            const user = JSON.parse(loggedUserJSON)
+            setUser(user)
+            blogService.setToken(user.token)
+        }
+    }, [])
+
     const handleLogin = async (event) => {
         event.preventDefault()
         try {
@@ -40,10 +49,10 @@ const App = () => {
     const addUser = async (event) => {
         event.preventDefault()
         try {
-            const user = await signupService.signup({
+            const addedUser = await signupService.signup({
                 name, username, password
             })
-            window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
+            window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(addedUser))
             blogService.setToken(user.token)
             setName('')
             setUsername('')
@@ -70,6 +79,8 @@ const App = () => {
         }
     }
 
+    const showBlogs = (blogs) => blogs.map(blog => <p>{blog.title}</p>)
+
     const handleName = (event) => setName(event.target.value)
     const handleUsername = (event) => setUsername(event.target.value)
     const handlePassword = (event) => setPassword(event.target.value)
@@ -79,9 +90,16 @@ const App = () => {
 
     return (
         <center>
-            <LoginForm login={handleLogin} u_name={handleUsername} u_password={handlePassword} />
-            <BlogForm blog={createBlog} title={handleTitle} author={handleAuthor} url={handleUrl} />
+            {user === null ?
+            <LoginForm login={handleLogin} u_name={handleUsername} u_password={handlePassword} /> :
+            <div>
+                <p>{user.name} logged in</p>
+                <BlogForm blog={createBlog} title={handleTitle} author={handleAuthor} url={handleUrl} />
+            </div>
+            }
             <SignUpForm addUser={addUser} name={handleName} u_name={handleUsername} u_password={handlePassword} />
+            <h1>Blogs</h1>
+            {showBlogs(blogs)}
         </center>
     )
 }
