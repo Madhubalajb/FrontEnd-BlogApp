@@ -15,6 +15,7 @@ const App = () => {
     const [author, setAuthor] = useState('')
     const [url, setUrl] = useState('')
     const [blogs, setBlogs] = useState([])
+    const [message, setMessage] = useState('')
 
     useEffect(() => {
         blogService.getData().then(blogs => setBlogs(blogs))
@@ -28,6 +29,13 @@ const App = () => {
             blogService.setToken(user.token)
         }
     }, [])
+
+    const showMessage = (message) => {
+        setMessage(message)
+        setTimeout(() => {
+            setMessage('')
+        }, 5000)
+    }
 
     const handleLogin = async (event) => {
         event.preventDefault()
@@ -54,6 +62,7 @@ const App = () => {
             })
             window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(addedUser))
             blogService.setToken(user.token)
+            showMessage('User created :)')
             setName('')
             setUsername('')
             setPassword('')
@@ -70,6 +79,7 @@ const App = () => {
                 title, author, url
             })
             setBlogs(blogs.concat(blog))
+            showMessage('Blog created :)')
             setTitle('')
             setAuthor('')
             setUrl('')
@@ -101,6 +111,7 @@ const App = () => {
     }
     return (
         <div>
+            {message}
             <p>{user.name} logged in</p><button onClick={logoutUser}>logout</button>
 
             <BlogForm blog={createBlog} title={handleTitle} author={handleAuthor} url={handleUrl} />
