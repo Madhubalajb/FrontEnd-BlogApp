@@ -81,26 +81,35 @@ const App = () => {
 
     const showBlogs = (blogs) => blogs.map(blog => <p>{blog.title}</p>)
 
+    const logoutUser = () => {
+        setUser('')
+        window.localStorage.removeItem('loggedBlogAppUser')
+        blogService.setToken('')
+    }
+
     const handleName = (event) => setName(event.target.value)
     const handleUsername = (event) => setUsername(event.target.value)
     const handlePassword = (event) => setPassword(event.target.value)
     const handleTitle = (event) => setTitle(event.target.value)
     const handleAuthor = (event) => setAuthor(event.target.value)
     const handleUrl = (event)=> setUrl(event.target.value)
-
+    
+    if(user === '') {
+        return (
+            <LoginForm login={handleLogin} u_name={handleUsername} u_password={handlePassword} /> 
+        )
+    }
     return (
-        <center>
-            {user === null ?
-            <LoginForm login={handleLogin} u_name={handleUsername} u_password={handlePassword} /> :
-            <div>
-                <p>{user.name} logged in</p>
-                <BlogForm blog={createBlog} title={handleTitle} author={handleAuthor} url={handleUrl} />
-            </div>
-            }
+        <div>
+            <p>{user.name} logged in</p><button onClick={logoutUser}>logout</button>
+
+            <BlogForm blog={createBlog} title={handleTitle} author={handleAuthor} url={handleUrl} />
+
             <SignUpForm addUser={addUser} name={handleName} u_name={handleUsername} u_password={handlePassword} />
+
             <h1>Blogs</h1>
             {showBlogs(blogs)}
-        </center>
+        </div>
     )
 }
 
