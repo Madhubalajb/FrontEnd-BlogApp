@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import LoginForm from './components/LoginForm'
 import SignUpForm from './components/SignUpForm'
 import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 import loginService from './services/login'
 import signupService from './services/signup'
 import blogService from './services/blog'
@@ -16,6 +17,10 @@ const App = () => {
     const [url, setUrl] = useState('')
     const [blogs, setBlogs] = useState([])
     const [message, setMessage] = useState('')
+
+    const loginFormRef = React.createRef()
+    const signupFormRef = React.createRef()
+    const blogFormRef = React.createRef()
 
     useEffect(() => {
         blogService.getData().then(blogs => setBlogs(blogs))
@@ -39,6 +44,7 @@ const App = () => {
 
     const handleLogin = async (event) => {
         event.preventDefault()
+        loginFormRef.current.toggleVisiblity()
         try {
             const user = await loginService.login({
                 username, password
@@ -56,6 +62,7 @@ const App = () => {
 
     const addUser = async (event) => {
         event.preventDefault()
+        signupFormRef.current.toggleVisiblity()
         try {
             const addedUser = await signupService.signup({
                 name, username, password
@@ -74,6 +81,7 @@ const App = () => {
 
     const createBlog = async (event) => {
         event.preventDefault()
+        blogFormRef.current.toggleVisiblity()
         try {
             const blog = await blogService.postData({
                 title, author, url
@@ -106,7 +114,9 @@ const App = () => {
     
     if(user === '') {
         return (
-            <LoginForm login={handleLogin} u_name={handleUsername} u_password={handlePassword} /> 
+            <Togglable buttonLabel='Login' ref={loginFormRef}>
+                <LoginForm login={handleLogin} u_name={handleUsername} u_password={handlePassword} /> 
+            </Togglable>
         )
     }
     return (
@@ -114,9 +124,13 @@ const App = () => {
             {message}
             <p>{user.name} logged in</p><button onClick={logoutUser}>logout</button>
 
-            <BlogForm blog={createBlog} title={handleTitle} author={handleAuthor} url={handleUrl} />
-
-            <SignUpForm addUser={addUser} name={handleName} u_name={handleUsername} u_password={handlePassword} />
+            <Togglable buttonLabel='Create new' ref={blogFormRef}>
+                <BlogForm blog={createBlog} title={handleTitle} author={handleAuthor} url={handleUrl} />
+            </Togglable>
+            
+            <Togglable buttonLabel='SignUp' ref={signupFormRef}>
+                <SignUpForm addUser={addUser} name={handleName} u_name={handleUsername} u_password={handlePassword} />
+            </Togglable>
 
             <h1>Blogs</h1>
             {showBlogs(blogs)}
