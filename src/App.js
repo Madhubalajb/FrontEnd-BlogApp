@@ -17,6 +17,7 @@ const App = () => {
     const [url, setUrl] = useState('')
     const [blogs, setBlogs] = useState([])
     const [message, setMessage] = useState('')
+    const [visible, setVisible] = useState(false)
 
     const loginFormRef = React.createRef()
     const signupFormRef = React.createRef()
@@ -44,7 +45,6 @@ const App = () => {
 
     const handleLogin = async (event) => {
         event.preventDefault()
-        loginFormRef.current.toggleVisiblity()
         try {
             const user = await loginService.login({
                 username, password
@@ -62,13 +62,11 @@ const App = () => {
 
     const addUser = async (event) => {
         event.preventDefault()
-        signupFormRef.current.toggleVisiblity()
+        signupFormRef.current.toggleVisibility()
         try {
             const addedUser = await signupService.signup({
                 name, username, password
             })
-            window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(addedUser))
-            blogService.setToken(user.token)
             showMessage('User created :)')
             setName('')
             setUsername('')
@@ -81,7 +79,7 @@ const App = () => {
 
     const createBlog = async (event) => {
         event.preventDefault()
-        blogFormRef.current.toggleVisiblity()
+        blogFormRef.current.toggleVisibility()
         try {
             const blog = await blogService.postData({
                 title, author, url
